@@ -51,23 +51,26 @@ def preprocess_input_data(inputs):
 # Streamlit UI
 st.title('Obesity Prediction Model')
 
-# Input fields
-gender = st.selectbox("Gender", ["Male", "Female"])
-age = st.slider("Age", 18, 100, 25)
-height = st.slider("Height (in cm)", 100, 250, 170)
-weight = st.slider("Weight (in kg)", 30, 200, 70)
-family_history = st.selectbox("Family History of Obesity", ["No", "Yes"])
-favc = st.selectbox("Frequent Consumption of High Calorie Food (FAVC)", ["No", "Yes"])
-fcvc = st.slider("Frequent Consumption of Vegetables (FCVC)", 1, 5, 3)
-ncp = st.slider("Number of Meals per Day (NCP)", 1, 10, 3)
-caec = st.selectbox("Consumption of Alcohol (CAEC)", ["No", "Yes"])
-smoke = st.selectbox("Smoker (SMOKE)", ["No", "Yes"])
-ch2o = st.slider("Water Consumption (CH2O)", 1, 10, 5)
-scc = st.selectbox("Consumption of Sugary Foods (SCC)", ["No", "Yes"])
-faf = st.slider("Physical Activity Level (FAF)", 1, 5, 3)
-tue = st.slider("Time spent on Physical Activity (TUE)", 1, 7, 3)
-calc = st.selectbox("Calorie Consumption (CALC)", ["No", "Yes"])
-mtrans = st.selectbox("Mode of Transport (MTRANS)", ["Bike", "Car", "Walking", "Train", "Other"])
+with st.sidebar:
+    # Input fields
+    gender = st.selectbox("Gender", ["Male", "Female"])
+    age = st.slider("Age", 18, 70, 25)
+    height = st.slider("Height (in cm)", 120, 200, 150)
+    weight = st.slider("Weight (in kg)", 30, 200, 70)
+    family_history = st.selectbox("Family History of Obesity", ["No", "Yes"])
+    favc = st.selectbox("Frequent Consumption of High Calorie Food (FAVC)", ["No", "Yes"])
+    fcvc = st.slider("Frequent Consumption of Vegetables (FCVC)", 1, 3, 2)
+    ncp = st.slider("Number of Meals per Day (NCP)", 1, 5, 3)
+    caec = st.selectbox("Food between Meals (CAEC)", ["No", "Sometimes", "Frequently", "Always"])
+    smoke = st.selectbox("Smoker", ["No", "Yes"])
+    ch2o = st.slider("Water Consumption (CH2O)", 1, 3, 2)
+    scc = st.selectbox("Monitor Calorie Intake (SCC)", ["No", "Yes"])
+    faf = st.slider("Physical Activity Level (FAF)", 0, 3, 1)
+    tue = st.slider("Time Level Spent on Devices (TUE)", 0, 2, 1)
+    calc = st.selectbox("Drink Alcohol? (CALC)", ["No", "Sometimes", "Frequently", "Always"])
+    mtrans = st.selectbox("Mode of Transport (MTRANS)", ["Public Transport", "Walking", "Automobile", "Motorbike", "Bike"])
+
+
 
 # Prepare input data
 inputs = {
