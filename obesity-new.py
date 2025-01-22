@@ -3,6 +3,7 @@ import pandas as pd
 import numpy as np
 import joblib
 from sklearn.preprocessing import StandardScaler
+import base64
 
 # Load the trained model and scaler
 model = joblib.load('svm_obesity_model.pkl')
@@ -48,8 +49,57 @@ def preprocess_input_data(inputs):
 
     return final_data
 
-# Streamlit UI
-st.title('Obesity Prediction Model')
+# Add custom background
+def add_bg_from_local(image_path):
+    st.markdown(
+        f"""
+        <style>
+        .stApp {{
+            background: url("data:image/png;base64,{image_path}");
+            background-size: cover;
+        }}
+        </style>
+        """,
+        unsafe_allow_html=True
+    )
+ 
+# Encode image to base64 for background
+def encode_image_to_base64(image_path):
+    with open(image_path, "rb") as image_file:
+        return base64.b64encode(image_file.read()).decode()
+ 
+# Call function to add background
+image_path = "Picture1.png"  # Replace with your image path
+encoded_image = encode_image_to_base64(image_path)
+add_bg_from_local(encoded_image)
+
+# Add custom CSS for the container
+st.markdown(
+    """
+    <style>
+    .custom-container h1 {
+        color: white; 
+        font-family:  Arial Black, sans-serif; /* Modern font */
+        font-size: 40px; /* Font size for title */
+        margin: 0; /* Remove default margin */
+        text-align: center; /* Center the text */
+
+    }
+    </style>
+    """,
+    unsafe_allow_html=True
+)
+
+# Add the HTML structure for the container and text
+st.markdown(
+    """
+    <div class="custom-container">
+        <h1>Obesity Prediction Application</h1>
+    </div>
+    """,
+    unsafe_allow_html=True
+)
+
 
 with st.sidebar:
     # Input fields
@@ -69,8 +119,6 @@ with st.sidebar:
     tue = st.slider("Time Level Spent on Devices (TUE)", 0, 2, 1)
     calc = st.selectbox("Drink Alcohol? (CALC)", ["No", "Sometimes", "Frequently", "Always"])
     mtrans = st.selectbox("Mode of Transport (MTRANS)", ["Public Transport", "Walking", "Automobile", "Motorbike", "Bike"])
-
-
 
 # Prepare input data
 inputs = {
@@ -113,15 +161,92 @@ processed_data = preprocess_input_data(inputs)
 # Make prediction using the model
 prediction = model.predict(processed_data)
 
-# Log the prediction
-st.write("Model Prediction:", prediction)
-
 # Define the class labels
 class_labels = [
     'Normal_Weight', 'Obesity_Type_I', 'Obesity_Type_II',
     'Obesity_Type_III', 'Overweight_Level_I', 'Overweight_Level_II'
 ]
+
+st.markdown(
+    """
+    <style>
+    .scrollable-table {
+        background-color: rgba(255, 255, 255, 0.9); /* Set background color to white */
+        padding: 10px; /* Add padding for better readability */
+        border-radius: 10px; /* Rounded corners */
+        border: 1px solid #ddd; /* Light border */
+        box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1); /* Subtle shadow */
+        max-width: 100%; /* Prevent the table from exceeding the container width */
+        max-height: 400px; /* Optional: limit the height of the table */
+        overflow-x: auto; /* Enable horizontal scrolling */
+        overflow-y: auto; /* Enable vertical scrolling (if needed) */
+    }
+    .custom-subheader {
+        color: white; /* Set font color to white */
+        font-size: 24px; /* Adjust font size if needed */
+        font-weight: bold; /* Make it bold to resemble a subheader */
+    }
+    </style>
+    """,
+    unsafe_allow_html=True
+)
+
+# Display user inputs in a scrollable table
+st.markdown('<h2 class="custom-subheader">Your Input Parameters</h2>', unsafe_allow_html=True)
+
+input_summary = {
+    "Gender": gender,
+    "Age": age,
+    "Height (cm)": height,
+    "Weight (kg)": weight,
+    "Family History of Obesity": family_history,
+    "Frequent High Calorie Food Consumption (FAVC)": favc,
+    "Vegetable Consumption Frequency (FCVC)": fcvc,
+    "Number of Meals per Day (NCP)": ncp,
+    "Food Between Meals (CAEC)": caec,
+    "Smoker": smoke,
+    "Water Consumption (CH2O)": ch2o,
+    "Monitors Calorie Intake (SCC)": scc,
+    "Physical Activity Level (FAF)": faf,
+    "Time Spent on Devices (TUE)": tue,
+    "Alcohol Consumption (CALC)": calc,
+    "Mode of Transport (MTRANS)": mtrans,
+}
+
+# Create the table and wrap it in a scrollable container
+st.markdown(
+    f"""
+    <div class="scrollable-table">
+        {pd.DataFrame([input_summary]).to_html(index=False, escape=False)}
+    </div>
+    """,
+    unsafe_allow_html=True
+)
+
+
 prediction_label = prediction[0]
 
-# Display the result
-st.subheader(f"Prediction: {prediction_label}")
+# Add custom CSS for the prediction text
+st.markdown(
+    """
+    <style>
+    .prediction-box {
+        background-color: rgba(0, 0, 0, 0.7); /* Semi-transparent black background */
+        color: white; /* White text for contrast */
+        font-size: 28px; /* Larger font size for emphasis */
+        font-weight: bold; /* Make the text bold */
+        text-align: center; /* Center the text */
+        padding: 20px; /* Add padding for spacing inside the box */
+        border-radius: 15px; /* Rounded corners */
+        border: 2px solid rgba(255, 255, 255, 0.5); /* Light white border */
+        box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.5); /* Subtle shadow for a floating effect */
+        margin-top: 20px; /* Add space above the prediction box */
+    }
+    </style>
+    """,
+    unsafe_allow_html=True
+)
+
+# Display the prediction with the new styling
+st.markdown(f'<div class="prediction-box">Prediction: {prediction_label}</div>', unsafe_allow_html=True)
+
